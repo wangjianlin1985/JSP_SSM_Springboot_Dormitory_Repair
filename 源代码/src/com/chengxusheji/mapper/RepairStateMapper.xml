@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.RepairStateMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加报修状态记录 -->
+	<insert id="addRepairState" parameterType="repairState">
+		insert into t_repairState(stateName) values 
+		(#{stateName})
+	</insert>
+
+	<!-- 按照查询条件分页查询报修状态记录 -->
+	<select id="queryRepairState" resultMap="repairStateMap" >
+		select t_repairState.* from t_repairState ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="repairStateMap" type="repairState">
+        <id property="stateId" column="stateId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有报修状态记录 -->
+	<select id="queryRepairStateList" resultMap="repairStateMap" >
+		select t_repairState.* from t_repairState ${where}
+	</select>
+
+    <!-- 按照查询条件的报修状态记录数 -->
+	<select id="queryRepairStateCount" resultType="int">
+		select count(*) from t_repairState ${where}
+	</select>
+
+	<!-- 根据主键查询某个报修状态记录 -->
+	<select id="getRepairState" parameterType="int" resultMap="repairStateMap">
+		select * from t_repairState where t_repairState.stateId = #{stateId}
+	</select>
+
+	<!-- 更新报修状态记录 -->
+	<update id="updateRepairState" parameterType="repairState">
+		update t_repairState set stateName=#{stateName} where stateId = #{stateId}
+	</update>
+
+	<!-- 删除报修状态记录 -->
+	<delete id="deleteRepairState" parameterType="int">
+		delete from t_repairState where stateId=#{stateId}
+	</delete>
+
+</mapper>

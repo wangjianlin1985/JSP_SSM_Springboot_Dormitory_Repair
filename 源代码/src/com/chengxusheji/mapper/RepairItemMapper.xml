@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.RepairItemMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加报修项目记录 -->
+	<insert id="addRepairItem" parameterType="repairItem">
+		insert into t_repairItem(itemName) values 
+		(#{itemName})
+	</insert>
+
+	<!-- 按照查询条件分页查询报修项目记录 -->
+	<select id="queryRepairItem" resultMap="repairItemMap" >
+		select t_repairItem.* from t_repairItem ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="repairItemMap" type="repairItem">
+        <id property="itemId" column="itemId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有报修项目记录 -->
+	<select id="queryRepairItemList" resultMap="repairItemMap" >
+		select t_repairItem.* from t_repairItem ${where}
+	</select>
+
+    <!-- 按照查询条件的报修项目记录数 -->
+	<select id="queryRepairItemCount" resultType="int">
+		select count(*) from t_repairItem ${where}
+	</select>
+
+	<!-- 根据主键查询某个报修项目记录 -->
+	<select id="getRepairItem" parameterType="int" resultMap="repairItemMap">
+		select * from t_repairItem where t_repairItem.itemId = #{itemId}
+	</select>
+
+	<!-- 更新报修项目记录 -->
+	<update id="updateRepairItem" parameterType="repairItem">
+		update t_repairItem set itemName=#{itemName} where itemId = #{itemId}
+	</update>
+
+	<!-- 删除报修项目记录 -->
+	<delete id="deleteRepairItem" parameterType="int">
+		delete from t_repairItem where itemId=#{itemId}
+	</delete>
+
+</mapper>

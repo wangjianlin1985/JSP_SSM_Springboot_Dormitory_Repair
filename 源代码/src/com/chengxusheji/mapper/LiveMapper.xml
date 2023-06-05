@@ -1,0 +1,50 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.LiveMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加住宿记录 -->
+	<insert id="addLive" parameterType="live">
+		insert into t_live(buildingObj,roomNo,studentObj,inDate,liveMemo) values 
+		(#{buildingObj.buildingId},#{roomNo},#{studentObj.studentNo},#{inDate},#{liveMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询住宿记录 -->
+	<select id="queryLive" resultMap="liveMap" >
+		select t_live.* from t_live,t_building,t_student ${where} and t_live.buildingObj = t_building.buildingId and t_live.studentObj = t_student.studentNo limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="liveMap" type="live">
+        <id property="liveId" column="liveId" />
+        <association property="buildingObj" column="buildingObj" select="com.chengxusheji.mapper.BuildingMapper.getBuilding" />
+        <association property="studentObj" column="studentObj" select="com.chengxusheji.mapper.StudentMapper.getStudent" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有住宿记录 -->
+	<select id="queryLiveList" resultMap="liveMap" >
+		select t_live.* from t_live,t_building,t_student ${where} and t_live.buildingObj = t_building.buildingId and t_live.studentObj = t_student.studentNo
+	</select>
+
+    <!-- 按照查询条件的住宿记录数 -->
+	<select id="queryLiveCount" resultType="int">
+		select count(*) from t_live,t_building,t_student ${where} and t_live.buildingObj = t_building.buildingId and t_live.studentObj = t_student.studentNo
+	</select>
+
+	<!-- 根据主键查询某个住宿记录 -->
+	<select id="getLive" parameterType="int" resultMap="liveMap">
+		select * from t_live where t_live.liveId = #{liveId}
+	</select>
+
+	<!-- 更新住宿记录 -->
+	<update id="updateLive" parameterType="live">
+		update t_live set buildingObj=#{buildingObj.buildingId},roomNo=#{roomNo},studentObj=#{studentObj.studentNo},inDate=#{inDate},liveMemo=#{liveMemo} where liveId = #{liveId}
+	</update>
+
+	<!-- 删除住宿记录 -->
+	<delete id="deleteLive" parameterType="int">
+		delete from t_live where liveId=#{liveId}
+	</delete>
+
+</mapper>

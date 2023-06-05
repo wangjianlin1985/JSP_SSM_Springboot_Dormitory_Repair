@@ -1,0 +1,49 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.RoomMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加宿舍记录 -->
+	<insert id="addRoom" parameterType="room">
+		insert into t_room(buildingObj,roomNo,roomPhoto,personNum,roomDesc) values 
+		(#{buildingObj.buildingId},#{roomNo},#{roomPhoto},#{personNum},#{roomDesc})
+	</insert>
+
+	<!-- 按照查询条件分页查询宿舍记录 -->
+	<select id="queryRoom" resultMap="roomMap" >
+		select t_room.* from t_room,t_building ${where} and t_room.buildingObj = t_building.buildingId limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="roomMap" type="room">
+        <id property="roomId" column="roomId" />
+        <association property="buildingObj" column="buildingObj" select="com.chengxusheji.mapper.BuildingMapper.getBuilding" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有宿舍记录 -->
+	<select id="queryRoomList" resultMap="roomMap" >
+		select t_room.* from t_room,t_building ${where} and t_room.buildingObj = t_building.buildingId
+	</select>
+
+    <!-- 按照查询条件的宿舍记录数 -->
+	<select id="queryRoomCount" resultType="int">
+		select count(*) from t_room,t_building ${where} and t_room.buildingObj = t_building.buildingId
+	</select>
+
+	<!-- 根据主键查询某个宿舍记录 -->
+	<select id="getRoom" parameterType="int" resultMap="roomMap">
+		select * from t_room where t_room.roomId = #{roomId}
+	</select>
+
+	<!-- 更新宿舍记录 -->
+	<update id="updateRoom" parameterType="room">
+		update t_room set buildingObj=#{buildingObj.buildingId},roomNo=#{roomNo},roomPhoto=#{roomPhoto},personNum=#{personNum},roomDesc=#{roomDesc} where roomId = #{roomId}
+	</update>
+
+	<!-- 删除宿舍记录 -->
+	<delete id="deleteRoom" parameterType="int">
+		delete from t_room where roomId=#{roomId}
+	</delete>
+
+</mapper>
